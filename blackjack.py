@@ -188,7 +188,7 @@ def playerDraw():
 
 def gameOver():
 	print_delay ("Game Over! YOU LOSE!")
-	answer = get_input("Do you want to restart this program? (yes/no)")
+	answer = get_input("Do you want to restart this program? (y/n): ")
 	if answer.lower().strip() in "y yes".split():
 		restart_program()
 	else:
