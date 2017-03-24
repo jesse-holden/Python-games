@@ -118,7 +118,6 @@ def dealer_turn():
 	global currentHand
 	global dealerHand
 	print_dealer_hand(dealerHand, hide_dealer_cards)
-	#print_delay ("Dealer's Hand: {" + list_to_string(dealerHand) + "}\nDealer Hand Value:", hand_value(dealerHand))
 	if hand_value(dealerHand) > 21:
 		return dealerBust()
 	elif hand_value(dealerHand) > hand_value(currentHand):
