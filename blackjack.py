@@ -10,9 +10,14 @@ card_faces = ["2", "3", "4", "5", "6", "7", "8", "9", "10", "Jack", "Queen", "Ki
 player_chips = 100
 current_bet = 10
 line_length = 70
-sleep_time = 1
+sleep_time = 0.5
 
 #Define Functions
+def print_delay(*args):
+	time.sleep(sleep_time)
+	for arg in args:
+		print arg
+
 def generateDeck(): #Create a new shuffled deck
 	deck = []
 	for i in range(len(card_suits)):
@@ -69,13 +74,12 @@ def new_game():
 	global currentDeck
 	global current_bet
 	global player_chips
-	time.sleep(1)
-	print "-" * line_length
+	print_delay ("-" * line_length)
 	if player_chips <= 0:
 		gameOver()
-	print "Current chips:", player_chips
-	print "Options:"
-	print "1) Deal new hand"
+	print_delay ("Current chips:", player_chips)
+	print_delay ("Options:")
+	print_delay ("1) Deal new hand")
 	try:
 		input = None
 		input = int(raw_input("> "))
@@ -84,40 +88,38 @@ def new_game():
 				try:
 					current_bet = int(raw_input("Enter bet (1 - " + str(player_chips) + "): "))
 					if current_bet < 1 or current_bet > player_chips:
-						print "Invalid amount."
+						print_delay ("Invalid amount.")
 						continue
 					break
 				except ValueError:
-					print "Invalid bet. (Please enter a number)"
+					print_delay ("Invalid bet. (Please enter a number)")
 					continue
 			currentDeck = generateDeck() #Create a new deck of cards
 			random.shuffle(currentDeck) #Randomize order of new deck
 			deal_hand(currentDeck)
 			return game_options()
 	except ValueError:
-		print "Invalid option. (%s)" % str(input)
+		print_delay ("Invalid option. (%s)" % str(input))
 		return new_game()
 	return
 
 def game_options():
-	time.sleep(1)
-	print "-" * line_length
-	print "Your Hand: {" + list_to_string(currentHand) + "}\nYour Hand Value:", hand_value(currentHand)
+	print_delay ("-" * line_length)
+	print_delay ("Your Hand: {" + list_to_string(currentHand) + "}\nYour Hand Value:", hand_value(currentHand))
 	if hand_value(currentHand) == 21:
 		return playerBlackJack()
 	elif hand_value(currentHand) > 21:
 		return playerBust()
-	print "Dealer's Hand: {" + list_to_string(dealerHand) + "}\nDealer Hand Value:", hand_value(dealerHand)
+	print_delay ("Dealer's Hand: {" + list_to_string(dealerHand) + "}\nDealer Hand Value:", hand_value(dealerHand))
 	if hand_value(dealerHand) == 21:
 		return dealerBlackJack()
 	return hit_or_stay()
 
 def dealer_turn():
-	time.sleep(1)
 	global currentDeck
 	global currentHand
 	global dealerHand
-	print "Dealer's Hand: {" + list_to_string(dealerHand) + "}\nDealer Hand Value:", hand_value(dealerHand)
+	print_delay ("Dealer's Hand: {" + list_to_string(dealerHand) + "}\nDealer Hand Value:", hand_value(dealerHand))
 	if hand_value(dealerHand) > 21:
 		return dealerBust()
 	elif hand_value(dealerHand) > hand_value(currentHand):
@@ -125,9 +127,9 @@ def dealer_turn():
 	elif hand_value(dealerHand) == hand_value(currentHand):
 		return playerDraw()
 	elif hand_value(dealerHand) < 17:
-		print "Dealer hits."
+		print_delay ("Dealer hits.")
 		draw_card(currentDeck, dealerHand)
-		print "Dealer drew the %s" % str(dealerHand[-1])
+		print_delay ("Dealer drew the %s" % str(dealerHand[-1]))
 		return dealer_turn()
 	else:
 		return playerWin()
@@ -136,39 +138,34 @@ def playerBust():
 	global player_chips
 	global current_bet	
 	player_chips -= current_bet
-	print "Your hand BUST! You LOST!"
-	time.sleep(sleep_time*2)
+	print_delay ("Your hand BUST! You LOST!")
 	return new_game()
 
 def dealerBust():
 	global player_chips
 	global current_bet	
 	player_chips += current_bet
-	print "Dealer hand BUST! You WIN!"
-	time.sleep(sleep_time*2)
+	print_delay ("Dealer hand BUST! You WIN!")
 	return new_game()
 
 def hit_or_stay():
-	time.sleep(1)
 	global currentDeck
 	global currentHand
 	global dealerHand
-	print "Options:"
-	print "1) Hit me"
-	print "2) Stay"
+	print_delay ("Options:\n1) Hit me\n2) Stay")
 	try:
 		input = int(raw_input("> "))
 		if input == 1:
 			draw_card(currentDeck, currentHand)
-			print "You drew the %s" % str(currentHand[-1])
+			print_delay ("You drew the %s" % str(currentHand[-1]))
 			return game_options()
 		elif input == 2:
 			return dealer_turn()
 	except ValueError:
-		print "Invalid option."
+		print_delay ("Invalid option.")
 		return hit_or_stay()
 	else:
-		print "Invalid option."
+		print_delay ("Invalid option.")
 		return hit_or_stay()
 	return
 
@@ -176,41 +173,36 @@ def playerBlackJack():
 	global player_chips
 	global current_bet
 	player_chips += current_bet * 2
-	print "Player got BLACKJACK! You WIN!"
-	time.sleep(sleep_time*2)
+	print_delay ("Player got BLACKJACK! You WIN!")
 	return new_game()
 
 def dealerBlackJack():
 	global player_chips
 	global current_bet
 	player_chips -= current_bet
-	print "Dealer got BLACKJACK! You LOST!"
-	time.sleep(sleep_time*2)
+	print_delay ("Dealer got BLACKJACK! You LOST!")
 	return new_game()
 
 def dealerWin():
 	global player_chips
 	global current_bet
 	player_chips -= current_bet
-	print "Dealer WON! You LOST!"
-	time.sleep(sleep_time*2)
+	print_delay ("Dealer WON! You LOST!")
 	return new_game()
 
 def playerWin():
 	global player_chips
 	global current_bet
 	player_chips += current_bet
-	print "Player WON! Dealer LOST!"
-	time.sleep(sleep_time*2)
+	print_delay ("Player WON! Dealer LOST!")
 	return new_game()
 
 def playerDraw():
-	print "DRAW!"
-	time.sleep(sleep_time*2)
+	print_delay ("DRAW!")
 	return new_game()
 
 def gameOver():
-	print "Game Over! YOU LOSE!"
+	print_delay ("Game Over! YOU LOSE!")
 	return
 
 def list_to_string(list):
@@ -230,11 +222,9 @@ def draw_card(deck, hand):
 	deck.remove(randCard)
 	hand.append(randCard)
 
-#Start Game
-print "Welcome to BlackJack!"
-#playerName = raw_input("What is your name?: ") #Collect player name from input
-#print "Greetings", playerName, "!"
-
 #Boilerplate
 if __name__ == '__main__':
-    new_game()
+	print_delay ("Welcome to BlackJack!")
+	#playerName = raw_input("What is your name?: ") #Collect player name from input
+	#print "Greetings", playerName, "!"
+	new_game()
