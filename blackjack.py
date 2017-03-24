@@ -65,7 +65,7 @@ def new_game():
 	global player_chips
 	print_delay ("-" * line_length)
 	if player_chips <= 0:
-		gameOver()
+		return gameOver()
 	print_delay ("Current chips:", player_chips)
 	print_delay ("Options:")
 	print_delay ("1) Deal new hand")
