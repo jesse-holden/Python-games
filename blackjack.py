@@ -1,6 +1,7 @@
 #Import modules
 from __future__ import print_function
 import random, sys, signal, time, os
+
 #Define variables
 card_suits = ["Spades", "Clubs", "Hearts", "Diamonds"]
 card_faces = ["2", "3", "4", "5", "6", "7", "8", "9", "10", "Jack", "Queen", "King", "Ace"]
@@ -13,8 +14,9 @@ sleep_time = 0.5
 def print_delay(*args):
 	time.sleep(sleep_time)
 	if len(args) > 1:
-		for arg in args:
-			print (arg, " ", end='')
+		print (args[0], end='')
+		for arg in args[1:]:
+			print (" ", arg, end='')
 		print ("\n")
 	else:
 		print (args[0])
@@ -45,15 +47,20 @@ def card_value(card): #Determine the individual value of a given card
 def hand_value(hand): #Determine the value of a given hand of cards
 	handv = 0
 	for x in range(len(hand)):
-		if card_is_ace(hand[x]) and handv + card_value(hand[x]) > 21:
-			handv += 1
-		else:
-			handv += card_value(hand[x])
+		handv += card_value(hand[x])
+	if number_of_aces(hand) > 0:
+		for n in range(number_of_aces(hand)):
+			if handv > 21:
+				handv -= 10
 	return handv
 
-def card_is_ace(card): #Check if the current hand contains Aces
-	cardf = card.split(" ")[0]
-	return cardf == "Ace"
+def number_of_aces(hand): #Return number of aces in selected hand
+	aces = 0
+	for card in hand:
+		cardf = card.split(" ")[0]
+		if cardf == "Ace":
+			aces += 1
+	return aces
 
 def new_game():
 	global currentDeck
