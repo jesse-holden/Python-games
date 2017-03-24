@@ -1,10 +1,6 @@
 #Import modules
 from __future__ import print_function
-import random
-import sys
-import signal
-import time
-
+import random, sys, signal, time, os
 #Define variables
 card_suits = ["Spades", "Clubs", "Hearts", "Diamonds"]
 card_faces = ["2", "3", "4", "5", "6", "7", "8", "9", "10", "Jack", "Queen", "King", "Ace"]
@@ -71,11 +67,11 @@ def new_game():
 	print_delay ("1) Deal new hand")
 	try:
 		input = None
-		input = int(raw_input("> "))
+		input = int(get_input("> "))
 		if input == 1:
 			while True:
 				try:
-					current_bet = int(raw_input("Enter bet (1 - " + str(player_chips) + "): "))
+					current_bet = int(get_input("Enter bet (1 - " + str(player_chips) + "): "))
 					if current_bet < 1 or current_bet > player_chips:
 						print_delay ("Invalid amount.")
 						continue
@@ -143,7 +139,7 @@ def hit_or_stay():
 	global dealerHand
 	print_delay ("Options:\n1) Hit me\n2) Stay")
 	try:
-		input = int(raw_input("> "))
+		input = int(get_input("> "))
 		if input == 1:
 			draw_card(currentDeck, currentHand)
 			print_delay ("You drew the %s" % str(currentHand[-1]))
@@ -192,7 +188,11 @@ def playerDraw():
 
 def gameOver():
 	print_delay ("Game Over! YOU LOSE!")
-	return
+	answer = get_input("Do you want to restart this program? (yes/no)")
+	if answer.lower().strip() in "y yes".split():
+		restart_program()
+	else:
+		return
 
 def list_to_string(list):
 	rstring = list[0]
@@ -211,9 +211,19 @@ def draw_card(deck, hand):
 	deck.remove(randCard)
 	hand.append(randCard)
 
+def restart_program():
+    """Restarts the current program.
+    Note: this function does not return. Any cleanup action (like
+    saving data) must be done before calling this function."""
+    python = sys.executable
+    os.execl(python, python, * sys.argv)
+
 #Boilerplate
 if __name__ == '__main__':
+	get_input = input
+	if sys.version_info[:2] <= (2, 7):
+		get_input = raw_input
 	print_delay ("Welcome to BlackJack!")
-	playerName = raw_input("What is your name?: ") #Collect player name from input
+	playerName = get_input("What is your name?: ") #Collect player name from input
 	print_delay ("Greetings " + playerName + "!")
 	new_game()
