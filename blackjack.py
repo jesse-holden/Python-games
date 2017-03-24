@@ -1,4 +1,5 @@
 #Import modules
+from __future__ import print_function
 import random
 import sys
 import signal
@@ -15,8 +16,12 @@ sleep_time = 0.5
 #Define Functions
 def print_delay(*args):
 	time.sleep(sleep_time)
-	for arg in args:
-		print (arg)
+	if len(args) > 1:
+		for arg in args:
+			print (arg, " ", end='')
+		print ("\n")
+	else:
+		print (args[0])
 
 def generateDeck(): #Create a new shuffled deck
 	deck = []
@@ -44,31 +49,15 @@ def card_value(card): #Determine the individual value of a given card
 def hand_value(hand): #Determine the value of a given hand of cards
 	handv = 0
 	for x in range(len(hand)):
-		handv += card_value(hand[x])
+		if card_is_ace(hand[x]) and handv + card_value(hand[x]) > 21:
+			handv += 1
+		else:
+			handv += card_value(hand[x])
 	return handv
 
-def short_card(card):
-	card = card.split(" ")
-	if card[0] == "Jack" or card == "Queen" or card == "King":
-		cardf = card[0][0]
-	else:
-		cardf = card[0]
-	return cardf + "o" + card[2][0]
-
-def short_hand(hand):
-	shortHand = []
-	for x in len(hand):
-		shortHand.append(short_card(hand[x]))
-	return shortHand
-
-def contains_ace(hand): #Check if the current hand contains Aces
-	for c in range(len(hand)):
-		cardf = hand[c].split(" ")[0]
-		if cardf == "Ace":
-			return True
-		else:
-			continue
-	return False
+def card_is_ace(card): #Check if the current hand contains Aces
+	cardf = card.split(" ")[0]
+	return cardf == "Ace"
 
 def new_game():
 	global currentDeck
@@ -225,6 +214,6 @@ def draw_card(deck, hand):
 #Boilerplate
 if __name__ == '__main__':
 	print_delay ("Welcome to BlackJack!")
-	#playerName = raw_input("What is your name?: ") #Collect player name from input
-	#print "Greetings", playerName, "!"
+	playerName = raw_input("What is your name?: ") #Collect player name from input
+	print_delay ("Greetings " + playerName + "!")
 	new_game()
