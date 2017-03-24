@@ -9,6 +9,7 @@ player_chips = 100
 current_bet = 10
 line_length = 70
 sleep_time = 0.5
+hide_dealer_cards = True
 
 #Define Functions
 def print_delay(*args):
@@ -66,6 +67,7 @@ def new_game():
 	global currentDeck
 	global current_bet
 	global player_chips
+	global hide_dealer_cards
 	print_delay ("-" * line_length)
 	if player_chips <= 0:
 		return gameOver()
@@ -89,6 +91,7 @@ def new_game():
 			currentDeck = generateDeck() #Create a new deck of cards
 			random.shuffle(currentDeck) #Randomize order of new deck
 			deal_hand(currentDeck)
+			hide_dealer_cards = True
 			return game_options()
 	except ValueError:
 		print_delay ("Invalid option. (%s)" % str(input))
@@ -96,14 +99,17 @@ def new_game():
 	return
 
 def game_options():
+	global hide_dealer_cards
 	print_delay ("-" * line_length)
+	if hand_value(currentHand) >= 21 or hand_value(dealerHand) >= 21:
+		hide_dealer_cards = False
+	print_dealer_hand(dealerHand, hide_dealer_cards)
 	print_delay ("Your Hand: {" + list_to_string(currentHand) + "}\nYour Hand Value:", hand_value(currentHand))
 	if hand_value(currentHand) == 21:
 		return playerBlackJack()
 	elif hand_value(currentHand) > 21:
 		return playerBust()
-	print_delay ("Dealer's Hand: {" + list_to_string(dealerHand) + "}\nDealer Hand Value:", hand_value(dealerHand))
-	if hand_value(dealerHand) == 21:
+	elif hand_value(dealerHand) == 21:
 		return dealerBlackJack()
 	return hit_or_stay()
 
@@ -111,7 +117,8 @@ def dealer_turn():
 	global currentDeck
 	global currentHand
 	global dealerHand
-	print_delay ("Dealer's Hand: {" + list_to_string(dealerHand) + "}\nDealer Hand Value:", hand_value(dealerHand))
+	print_dealer_hand(dealerHand, hide_dealer_cards)
+	#print_delay ("Dealer's Hand: {" + list_to_string(dealerHand) + "}\nDealer Hand Value:", hand_value(dealerHand))
 	if hand_value(dealerHand) > 21:
 		return dealerBust()
 	elif hand_value(dealerHand) > hand_value(currentHand):
@@ -121,10 +128,18 @@ def dealer_turn():
 	elif hand_value(dealerHand) < 17:
 		print_delay ("Dealer hits.")
 		draw_card(currentDeck, dealerHand)
-		print_delay ("Dealer drew the %s" % str(dealerHand[-1]))
+		print_delay ("Dealer drew the %s." % str(dealerHand[-1]))
 		return dealer_turn()
 	else:
 		return playerWin()
+
+def print_dealer_hand(dealerHand, is_hidden):
+	dealer_cards = list_to_string(dealerHand)
+	dealer_cardv = str(hand_value(dealerHand))
+	if is_hidden:
+		dealer_cards = "%s, HIDDEN" % list_to_string(dealerHand[:-1])
+		dealer_cardv = str(hand_value(dealerHand[:-1]))
+	print_delay ("Dealer's Hand: {%s}\nDealer Hand Value: %s\n" % (dealer_cards, dealer_cardv))
 
 def playerBust():
 	global player_chips
@@ -144,6 +159,7 @@ def hit_or_stay():
 	global currentDeck
 	global currentHand
 	global dealerHand
+	global hide_dealer_cards
 	print_delay ("Options:\n1) Hit me\n2) Stay")
 	try:
 		input = int(get_input("> "))
@@ -152,6 +168,7 @@ def hit_or_stay():
 			print_delay ("You drew the %s" % str(currentHand[-1]))
 			return game_options()
 		elif input == 2:
+			hide_dealer_cards = False
 			return dealer_turn()
 	except ValueError:
 		print_delay ("Invalid option.")
