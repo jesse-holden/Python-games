@@ -16,7 +16,7 @@ sleep_time = 0.5
 def print_delay(*args):
 	time.sleep(sleep_time)
 	for arg in args:
-		print arg
+		print (arg)
 
 def generateDeck(): #Create a new shuffled deck
 	deck = []
