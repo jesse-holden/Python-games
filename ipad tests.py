@@ -14,5 +14,5 @@ def is_fib(n):
 			return False
 		b += 1
 
-inputi = int(raw_input())
+inputi = int(input())
 print (is_fib(inputi))

@@ -14,7 +14,7 @@ def fibonacci_i(n):
 
 def is_prime(n):
 	if n < 2: return False
-	for x in range(2,int(n ** 0.5)):
+	for x in range(2,int(n ** 0.5)+1):
 		if n % x == 0:
 			return False
 	return True
@@ -23,8 +23,8 @@ def is_prime(n):
 while True:
 	try:
 		gc.collect()
-		print "We will calculate the result of the fibonacci sequence given the input."
-		input_int = int(raw_input("Input: "))
+		print ("We will calculate the result of the fibonacci sequence given the input.")
+		input_int = int(input("Input: "))
 		#temp = []
 		temp2 = []
 		#for x in range(input_int):
@@ -33,8 +33,8 @@ while True:
 		for x in temp:
 			if is_prime(x):
 				temp2.append(x)
-		print "Result:", temp, "\n"
-		print "Primes:", temp2, "\n"
+		print ("Result:", temp, "\n")
+		print ("Primes:", temp2, "\n")
 	except ValueError:
-		print "Input error."
+		print ("Input error.")
 		break
